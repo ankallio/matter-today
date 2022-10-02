@@ -1,5 +1,7 @@
 package io.kall.mattertoday;
 
+import java.time.ZoneId;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
@@ -35,6 +37,7 @@ public class ConfigLogger {
 		log.info("Mattermost team: {}", mattermostTeam);
 		log.info("Mattermost channel: {}", mattermostChannel);
 		log.info("Mattermost auth header: {}", mattermostAuthorization.replaceAll(".", "*"));
+		log.info("Default timezone: {}", ZoneId.systemDefault());
 	}
 	
 }
