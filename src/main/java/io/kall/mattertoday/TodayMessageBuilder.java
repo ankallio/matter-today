@@ -6,34 +6,35 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-import io.kall.mattertoday.MattermostClient.User;
+import io.kall.mattertoday.mattermost.MattermostClient.User;
+import io.kall.mattertoday.mattermost.MattermostService;
+import io.kall.mattertoday.webcalguru.WebcalGuruService;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.ParserException;
 
-@Component
+@ApplicationScoped
 @Slf4j
 public class TodayMessageBuilder {
 	
-	@Autowired
-	private WebcalGuruService calService;
+	@Inject
+	WebcalGuruService calService;
 	
-	@Autowired
-	private MattermostService mattermostService;
+	@Inject
+	MattermostService mattermostService;
+
+	private static final ZoneId ZONE = ZoneId.systemDefault();
 	
-	@Autowired
-	private ZoneId zone;
-	
-	public String buildMsg(SlashCommand command) throws IOException, ParserException {
+	public String buildMsg(SlashCommandParams command) throws IOException, ParserException {
 		boolean automated = false;
 		if (command == null) {
 			automated = true;
-			command = new SlashCommand();
+			command = new SlashCommandParams();
 		}
 
-		LocalDate date = LocalDate.now(zone);
+		LocalDate date = LocalDate.now(ZONE);
 		
 		StringBuilder sb = new StringBuilder("## Tänään " + date.toString());
 		
@@ -41,7 +42,7 @@ public class TodayMessageBuilder {
 		if (!names.isEmpty()) {
 			sb.append("\n* Nimipäiväsankarit: **"+names.stream().collect(Collectors.joining(", "))+"**");
 			
-			String channelId = command.getChannel_id();
+			String channelId = command.getChannelId();
 			List<User> matchingNameUsers;
 			if (channelId != null) {
 				try {
@@ -86,8 +87,8 @@ public class TodayMessageBuilder {
 		if (command.getCommand() != null) {
 			commandInfoBuilder.append("Näytetty päivän tiedot komennolla [" + command.getCommand() + "]. ");
 		}
-		if (command.getUser_name() != null) {
-			commandInfoBuilder.append("Käynnistäjä: [" + command.getUser_name() + "]. ");
+		if (command.getUserName() != null) {
+			commandInfoBuilder.append("Käynnistäjä: [" + command.getUserName() + "]. ");
 		}
 		if (automated) {
 			commandInfoBuilder.append("Ajastettu toiminto. ");

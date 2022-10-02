@@ -1,31 +1,32 @@
-package io.kall.mattertoday;
+package io.kall.mattertoday.mattermost;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import javax.enterprise.context.ApplicationScoped;
 
-import io.kall.mattertoday.MattermostClient.Channel;
-import io.kall.mattertoday.MattermostClient.NewPost;
-import io.kall.mattertoday.MattermostClient.Post;
-import io.kall.mattertoday.MattermostClient.User;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import io.kall.mattertoday.mattermost.MattermostClient.Channel;
+import io.kall.mattertoday.mattermost.MattermostClient.NewPost;
+import io.kall.mattertoday.mattermost.MattermostClient.Post;
+import io.kall.mattertoday.mattermost.MattermostClient.User;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@ApplicationScoped
 @Slf4j
 public class MattermostService {
 	
-	@Autowired
-	private MattermostClient mattermost;
+	@RestClient
+	MattermostClient mattermost;
 	
-	@Value("${mattermost.teamName}")
-	private String teamName;
+	@ConfigProperty(name = "mattermost.teamname")
+	String teamName;
 	
-	@Value("${mattermost.channelName}")
-	private String channelName;
+	@ConfigProperty(name = "mattermost.channelname")
+	String channelName;
 	
 	public List<User> getChannelUsers(String channelId) {
 		Instant before = Instant.now();

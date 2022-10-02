@@ -5,28 +5,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-import io.kall.mattertoday.MattermostClient.User;
+import io.kall.mattertoday.mattermost.MattermostClient.User;
+import io.kall.mattertoday.mattermost.MattermostService;
+import io.kall.mattertoday.webcalguru.WebcalGuruService;
+import io.quarkus.scheduler.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.ParserException;
 
-@Component
+@ApplicationScoped
 @Slf4j
 public class ScheduledTasks {
 	
-	@Autowired
-	private WebcalGuruService calService;
+	@Inject
+	WebcalGuruService calService;
 	
-	@Autowired
-	private MattermostService mattermostService;
+	@Inject
+	MattermostService mattermostService;
 	
-	@Autowired
-	private TodayMessageBuilder msgBuilder;
+	@Inject
+	TodayMessageBuilder msgBuilder;
 	
-	@Scheduled(cron = "0 0 8 * * *")
+	@Scheduled(cron = "{scheduled.message.cron}")
 	public void postTodayInfoIfNecessary() throws IOException, ParserException {
 		// Post today message to a specified channel, if any of:
 		// * One of channel's users has name-day today
