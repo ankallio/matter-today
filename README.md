@@ -31,26 +31,8 @@ If you want to build an _über-jar_, execute the following command:
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
-## Creating a native executable
+## Building docker image
 
-You can create a native executable using: 
 ```shell script
-./mvnw package -Pnative
+./mvnw clean package -Dquarkus.container-image.build=true
 ```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/matter-today-0.0.1-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
